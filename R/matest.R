@@ -14,10 +14,11 @@
 ######################################################################
 
 matest <- function(data, model, term, Contrast, n.perm=1000, nnodes=1,
-                  shuffle.method=c("sample", "resid"),
-                  MME.method=c("REML","noest","ML"),
-                  test.method=c(1,0,1,1),
-                  pval.pool=TRUE, verbose=TRUE)
+                   test.type=c("ttest","ftest"),
+                   shuffle.method=c("sample", "resid"),
+                   MME.method=c("REML","noest","ML"),
+                   test.method=c(1,0,1,1),
+                   pval.pool=TRUE, verbose=TRUE)
 {
   if (class(data) != "madata")
     stop("data is not an object of class madata.")
@@ -27,7 +28,7 @@ matest <- function(data, model, term, Contrast, n.perm=1000, nnodes=1,
   # get the methods
   shuffle.method <- match.arg(shuffle.method)
   MME.method <- match.arg(MME.method)
-
+  
   # local variables
   nreps <- data$n.rep
   ngenes <- data$n.gene
@@ -92,18 +93,34 @@ matest <- function(data, model, term, Contrast, n.perm=1000, nnodes=1,
   # make one if not given,
   # check the validity if given
   ##########################################
-  is.ftest <- TRUE # a flag to indicate whether it's a F-test or T-test
+  # for backward compatibility, if user provide Contrast matrix
+  # this will be a T-test by default, unless user specify the test type
   if(missing(Contrast)) {# no Contrast matrix, make it
     Contrast <- makeContrast(model, term)
     nContrast <- 1
+    # this must be a F-test
+    if(missing(test.type))
+      is.ftest <- TRUE
+    else { # test.type is given
+      test.type <- match.arg(test.type)
+      if(test.type=="ttest") # cannot be T-test
+        stop("You must specify a Contrast matrix for doing T-test")
+    }
   }
-  else {
-    # given contrast matrix, check if it's valid
+  else { # given contrast matrix.
+    # check if the contrast matrix is valid
     checkContrast(model, term, Contrast)
-    # This is a T-test (although return F values)
-    is.ftest <- FALSE
-    # number of tests requested
-    nContrast <- dim(Contrast)[1] # number of t-tests (comparisons)
+    # test type is T-test by default for backward compatibility
+    test.type <- match.arg(test.type)
+    if(test.type=="ftest") {
+      is.ftest <- TRUE
+      nContrast <- 1
+    }
+    else { # this is T-test, but will return F values 
+      is.ftest <- FALSE
+      # number of tests requested
+      nContrast <- dim(Contrast)[1] # number of t-tests (comparisons)
+    }
   }
   
   # do F test on the observed data
@@ -111,7 +128,7 @@ matest <- function(data, model, term, Contrast, n.perm=1000, nnodes=1,
     cat("Doing F-test on observed data ...\n")
   # fit ANOVA model
   anovaobj <- fitmaanova(data, model, method=MME.method, verbose=FALSE)
-  ftest.obs <- matest.engine(anovaobj, term, test.method=test.method,
+  ftest.obs <- matest.engine(anovaobj, term, test.method=test.method, 
                              Contrast=Contrast, is.ftest=is.ftest, verbose=FALSE)
   # get the results
   mv <- ftest.obs$mv

@@ -31,10 +31,11 @@
 
 \usage{
 matest(data, model, term, Contrast, n.perm=1000, nnodes=1,
-      shuffle.method=c("sample", "resid"),
-      MME.method=c("REML","noest","ML"),
-      test.method=c(1,0,1,1),
-      pval.pool=TRUE, verbose=TRUE)
+       test.type = c("ttest", "ftest"),
+       shuffle.method=c("sample", "resid"),
+       MME.method=c("REML","noest","ML"),
+       test.method=c(1,0,1,1),
+       pval.pool=TRUE, verbose=TRUE)
 }
 
 \arguments{
@@ -43,15 +44,22 @@ matest(data, model, term, Contrast, n.perm=1000, nnodes=1,
   \item{term}{The term(s) to be tested. It can be multiple terms. Note
     that the tested term must be fixed. If the term to be tested is a
     random term, it will be converted to a fixed term than do test.}
-  \item{Contrast}{The comparison matrix for the term. The number of
+  \item{Contrast}{The contrast matrix for the term. The number of
     columns equals to the number of levels in the term. The number of
     rows is the number of T-test you want to carry. Note that it must
-    be a matrix. Use \code{\link[base]{matrix}} command to make it. If
-    this is provided, T-test will be performed. Otherwise, F-test will
-    be performed on the term.}
+    be a matrix. Use \code{\link[base]{matrix}} command to make it. Note
+    that the the hypothesis test can be formulated as H0: Lb=0 versus
+    alternative. This contrast matrix is L.}
   \item{n.perm}{An integer for number of permuatations.}
   \item{nnodes}{Number of nodes in the MPI cluster. If 1, the
     permutation test will be running on the local computer.}
+  \item{test.type}{Test type. It could be F-test or T-test. If the
+    Contrast matrix is missing, this should be a "ftest" and the 
+    contrast matrix is generated automatically to conver the whole
+    linear space. If the Contrast matrix is given, this could be "ftest"
+    or "ttest". The default is "ttest" (for backward compatability).
+    For T-test, the code will do a series of T-test, where each T-test
+    corresponds to a row in the contrast matrix.}
   \item{shuffle.method}{Data shuffling method. "sample" for sample
     shuffling and "resid" for residual shuffling. Read "Data Shuffling"
     section for detail.}
@@ -142,6 +150,14 @@ model.add.fix <- makeModel(data=paigen, formula=~Dye+Array+Strain+Diet)
 \dontrun{ttest.strain.fix <- matest(paigen, model.add.fix,
          term="Strain", Contrast=C, n.perm=100, nnodes=8)}
 \dontrun{volcano(ttest.strain.fix)}
+
+# a user specified F-test on Strain
+# note that the F- and P-values generated in this test is exactly the
+# same as the above F-test. But the volcano plot looks a little
+# different because the X-axis values are different
+\dontrun{C <- matrix(c(1,-1/2,-1/2,1,0,-1), nrow=2, byrow=TRUE)
+test.Strain.fix <- matest(paigen, model.add.fix, term="Strain",
+Contrast=C, test.type="ftest", n.perm=100)}
 
 ##################################
 # mixed model test

@@ -2,8 +2,16 @@
 Library maanova
 ================
 
+Version 0.98-4, Mar 4, 2005
+Add a new option test.type in matest function.
+Then user can specify a contrast matrix for F test
+
+---------------------------------------------------
+
 Version 0.98-3, Jan 6, 2005
 Correct a bug in shuffle.maanova
+
+---------------------------------------------------
 
 Version 0.98-2, Dec 10, 2004
 

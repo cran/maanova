@@ -85,7 +85,7 @@ volcano.ftest <- function(matestobj, threshold, method, title,
   
   # plot the figure
   xlabel <- "" #F3 test F value"
-  plot(xvalue, yvalue, xlab=xlabel, ylab="log10(Ptab)",
+  plot(xvalue, yvalue, xlab=xlabel, ylab="-log10(Ptab)",
        col="blue", pch=4, cex=0.5, main=title)
 
   # draw a reference line based on the threshold of f1
@@ -239,7 +239,7 @@ volcano.ttest <- function(matestobj, threshold, method, title,
     # y-axis value
     yvalue <- -log10(p1[,icon])
     # plot the figure
-    plot(xvalue, yvalue, xlab=xlabel, ylab="log10(Ptab)",
+    plot(xvalue, yvalue, xlab=xlabel, ylab="-log10(Ptab)",
          col="blue", pch=4, cex=0.5, main=title)
   
     # draw a reference line based on the threshold of f1

@@ -11,8 +11,7 @@
 }
 
 \usage{
-write.madata <- function(madata, datafile="madata.txt",
-          designfile="design.txt")
+write.madata(madata, datafile="madata.txt", designfile="design.txt") 
 }
 
 \arguments{

@@ -23,7 +23,7 @@
 }
   
 \usage{
-dyeswapfilter <- function(dataobj, r=4)
+dyeswapfilter(dataobj, r=4)
 }
 
 \arguments{
@@ -38,13 +38,14 @@ dyeswapfilter <- function(dataobj, r=4)
 }
 
 \examples{
+\dontrun{
 data(dbldyeswap)
 # riplot before filtering
 riplot(rawdata)
 # filter the gene
 rawdata <- dyeswapfilter(rawdata)
 # riplot again - some genes are highlighted
-riplot(rawdata)
+riplot(rawdata)}
 }
 
 \keyword{models}
