@@ -471,6 +471,7 @@ matest.engine <- function(anovaobj, term, mv, test.method, Contrast,
       
       # F1
       if(test.method[1] == 1) {
+#        browser()
         partC <- C1[colidx, colidx]
         if(!is.ftest)
           ftest$F1[i,] <- apply(Contrast, 1, ttest)
@@ -937,7 +938,7 @@ shuffle.maanova <- function(data, model, term)
         idx.perm <- as.vector(idx.obs)
       }
       else { # has no dye effect, shuffle everything freely
-        idx.perm <- as.vector(idx.obs(sample(ndye*narray)))
+        idx.perm <- as.vector(idx.obs[sample(ndye*narray)])
       }
     }
   }

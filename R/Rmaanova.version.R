@@ -14,7 +14,7 @@
 ######################################################################
 
 Rmaanova.version <- function() {
-  cat("\nCurrent R/maanova version is 0.98-1\n\n")
+  cat("\nCurrent R/maanova version is 0.98-3\n\n")
 }
 
     

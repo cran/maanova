@@ -2,6 +2,9 @@
 Library maanova
 ================
 
+Version 0.98-3, Jan 6, 2005
+Correct a bug in shuffle.maanova
+
 Version 0.98-2, Dec 10, 2004
 
 Made lots of misc changes on R and Rd files to pass 
