@@ -1,0 +1,29 @@
+adjPval                 Generate FDR adjusted P values for F test
+                        result.
+arrayview               View the layout of input data
+consensus               Build consensus tree out of bootstrap cluster
+                        result
+createData              Calculate and create a data object for Micro
+                        Array experiment
+dyeswapfilter           Gene filter for dye-swap experiment
+fitmaanova              Fit ANOVA model for Micro Array experiment
+fom                     Figure of Merit
+geneprofile             Expression plot for selected genes
+gridcheck               Plot grid-by-grid data comparison for arrays
+macluster               Clustering analysis for Micro Array experiment
+makeModel               Make model object for N-dye Micro Array
+                        experiment
+matest                  Statistical test for Microarray experiment
+read.madata             Read Micro Array data from TAB delimited
+                        simple text file
+resiplot                Residual plot for Micro Array Experiment
+riplot                  Ratio intensity plot for 2-dye Micro Array
+                        experiment
+Rmaanova.version        Display the current version of the package
+subset.madata           Subsetting Micro Array data objects
+transform.madata        Micro Array experiment data transformation
+util                    Utility functions
+varplot                 Variance component plot
+volcano                 Volcano plot for F test results
+write.madata            Write Micro Array data to a TAB delimited
+                        simple text file
