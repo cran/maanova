@@ -89,17 +89,19 @@ paigen <- createData(paigen.raw, n.rep=2)
 model.noint.fix <- makeModel(data=paigen, formula=~Array+Dye+Spot+Strain+Diet)
 
 # F-test strain effect
-\dontrun{test.strain.fix <- matest(paigen, model.noint.fix, term="Strain", n.perm=500,
-        shuffle.method="resid", test.method=rep(1,4))}
+\dontrun{
+test.strain.fix <- matest(paigen, model.noint.fix, term="Strain", n.perm=500,
+        shuffle.method="resid", test.method=rep(1,4))
 # volcano plot
-\dontrun{idx.strain.fix <- volcano(test.strain.fix, title="Strain test - fixed model")}
+idx.strain.fix <- volcano(test.strain.fix, title="Strain test - fixed model")
 
 # T-test all pairwise comparison on strain
-\dontrun{C <- matrix(c(1,-1,0,1,0,-1, 0,1,-1), nrow=3, byrow=TRUE)
+C <- matrix(c(1,-1,0,1,0,-1, 0,1,-1), nrow=3, byrow=TRUE)
 ttest.strain.fix <- matest(paigen, model.noint.fix, term="Strain",
          Contrast=C, n.perm=500, test.method=rep(1,4))
 # volcano plot
-volcano(ttest.strain.fix)}
+volcano(ttest.strain.fix)
+}
 }
 
 \keyword{hplot}

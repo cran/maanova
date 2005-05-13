@@ -62,14 +62,16 @@ gridcheck(rawdata, array1, array2, highlight.flag = TRUE, flag.color = "Red",
 }
 
 \examples{
+\dontrun{
 # load in data
-\dontrun{data(dbldyeswap)
+data(dbldyeswap)
 # grid check on all arrays
 gridcheck(rawdata, margin=c(1,1,1,1))
 graphics.off()
 # grid check array 1 versus array 2
 gridcheck(rawdata, array1=1, array2=2, margin=c(1,1,1,1))
-graphics.off()}
+graphics.off()
+}
 }
 
 \keyword{hplot}

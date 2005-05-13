@@ -105,7 +105,8 @@ transform.madata(x,method=c("shift","glowess","rlowess","linlog","linlogshift"),
 # load in data
 data(dbldyeswap)
 # do regional loess on raw data
-\dontrun{raw.lowess <- transform(rawdata, method="rlowess")
+\dontrun{
+raw.lowess <- transform(rawdata, method="rlowess")
 graphics.off()
 
 # make data object and do normalization on it
@@ -116,7 +117,8 @@ data1.shift <- transform(data1, method="shift", lolim=-50, uplim=50,
          draw="off")
 }
 # do global lowess and output the plots to a postscript file
-\dontrun{postscript(file="glowess.ps")
+\dontrun{
+postscript(file="glowess.ps")
 data1.glowess <- transform(data1, method="glowess", draw="dev")
 graphics.off()
 

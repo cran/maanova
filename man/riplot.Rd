@@ -53,7 +53,8 @@ riplot(object, title, array, color = "blue", highlight.flag = TRUE,
 }
 
 \examples{
-\dontrun{data(dbldyeswap)
+\dontrun{
+data(dbldyeswap)
 ############################
 # riplot on rawdata
 ############################
@@ -71,7 +72,8 @@ riplot(rawdata, array=c(1,3), onScreen=FALSE)
 data1 <- createData(rawdata, n.rep=2, avgreps=1)
 # do RI plot for all arrays
 riplot(data1)
-graphics.off()}
+graphics.off()
+}
 }
 
 \keyword{hplot}

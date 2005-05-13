@@ -45,7 +45,8 @@ arrayview(object, ratio, array, colormap, onScreen=TRUE, ...)
 }
 
 \examples{
-\dontrun{data(dbldyeswap)
+\dontrun{
+data(dbldyeswap)
 ############################
 # arrayview plot on rawdata
 ############################

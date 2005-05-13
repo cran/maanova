@@ -544,10 +544,11 @@ plot.consensus.kmean <- function(x, ...)
     nfig.thisplot <- iend - istart + 1
     
     # generate a new figure for each plot
-    if(.Platform$GUI == "AQUA")
-      quartz()
-    else
-      x11()
+    get(getOption("device"))()
+#    if(.Platform$GUI == "AQUA")
+#      quartz()
+#    else
+#      x11()
 
     # build a matrix for figure layout
     mat <- matrix(c(1:nfig.thisplot, rep(0, n.col*n.row-nfig.thisplot)),

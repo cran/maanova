@@ -92,10 +92,11 @@ arrayview <-
     }
     if(onScreen) {
       # open a window on screen
-      if(.Platform$GUI == "AQUA")
-        quartz()
-      else
-        x11()
+      get(getOption("device"))()
+#      if(.Platform$GUI == "AQUA")
+#        quartz()
+#      else
+#        x11()
     }
     image(1:n.gcol, 1:n.grow, t(data.grid), ylab="Row",
           xlab="Column", col=colormap, main=paste("Array", i),... )

@@ -62,11 +62,12 @@ riplot <-
     array <- 1:object$n.array
   for (i in array) {
     if(onScreen) {
+      get(getOption("device"))()
       # open a window on screen
-      if(.Platform$GUI == "AQUA")
-        quartz()
-      else
-        x11()
+#      if(.Platform$GUI == "AQUA")
+#        quartz()
+#      else
+#        x11()
     }
     plot( I[,i], R[,i], xlim=c(min(I),max(I)), ylim=c(-tmp,tmp),
          xlab=expression(log[2](R*G)), ylab=expression(log[2](R/G)),

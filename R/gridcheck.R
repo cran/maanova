@@ -54,10 +54,11 @@ gridcheck <- function(rawdata, array1, array2, highlight.flag=TRUE,
     for (i.array in array1) {
       if(i.array != array1[1]) {
         # open a new window
-        if(.Platform$GUI == "AQUA")
-          quartz()
-        else
-          x11()
+        get(getOption("device"))()
+#        if(.Platform$GUI == "AQUA")
+#          quartz()
+#        else
+#          x11()
       }
       # setup the layout and margin
       layout(matrix(1:(n.mrow*n.mcol), n.mrow, n.mcol, byrow=TRUE))
@@ -105,10 +106,11 @@ gridcheck <- function(rawdata, array1, array2, highlight.flag=TRUE,
           nplot <- nplot + 1
           if(nplot!=1) {
             # open a window on screen
-            if(.Platform$GUI == "AQUA")
-              quartz()
-            else
-              x11()
+            get(getOption("device"))()
+#            if(.Platform$GUI == "AQUA")
+#              quartz()
+#            else
+#              x11()
           }
 
           # setup the layout and margin

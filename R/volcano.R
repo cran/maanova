@@ -231,10 +231,11 @@ volcano.ttest <- function(matestobj, threshold, method, title,
     # start to plot
     if(onScreen) {
       # open a window on screen
-      if(.Platform$GUI == "AQUA")
-        quartz()
-      else
-        x11()
+      get(getOption("device"))()
+ #    if(.Platform$GUI == "AQUA")
+ #       quartz()
+ #     else
+ #       x11()
     }
     # y-axis value
     yvalue <- -log10(p1[,icon])

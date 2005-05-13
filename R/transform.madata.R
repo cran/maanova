@@ -160,10 +160,11 @@ shift <- function(object, lolim, uplim, draw)
     if( draw != "off") { # draw the offset plot
       if( (draw=="screen") & (k!=1) ) {
         # open a window on screen
-        if(.Platform$GUI == "AQUA")
-          quartz()
-        else
-          x11()
+        get(getOption("device"))()
+#        if(.Platform$GUI == "AQUA")
+#          quartz()
+#        else
+#          x11()
       }
       # setup the layout of the figures
       layout(matrix(1:4,2,2) )
@@ -238,10 +239,11 @@ glowess <- function(object, method, f, iter, degree, draw)
     if(draw != "off") {      
       if( (draw=="screen") & (k!=1) ) {
         # open a window on screen
-        if(.Platform$GUI == "AQUA")
-          quartz()
-        else
-          x11()
+        get(getOption("device"))()
+#        if(.Platform$GUI == "AQUA")
+#          quartz()
+#        else
+#          x11()
       }
       # setup the layout of the figures
       layout(matrix(1:2,2,1) )
@@ -305,10 +307,11 @@ rlowess <- function(object, method, grow, gcol, f, iter, degree, draw)
     if(draw!="off") {
       if( (draw=="screen") & (k!=1) ) {
         # open a window on screen
-        if(.Platform$GUI == "AQUA")
-          quartz()
-        else
-          x11()
+        get(getOption("device"))()
+#    if(.Platform$GUI == "AQUA")
+#          quartz()
+#        else
+#          x11()
       }
       layout(matrix(1:2,2,1) )
       # plot RI plot before offset at figure 1
@@ -363,10 +366,11 @@ linlog <- function(object, cg, cr, draw)
     for(i in 1:object$n.array) {
       if( (draw=="screen") & (i!=1)) {
         # open a window on screen
-        if(.Platform$GUI == "AQUA")
-          quartz()
-        else
-          x11()
+        get(getOption("device"))()
+#        if(.Platform$GUI == "AQUA")
+#          quartz()
+#        else
+#          x11()
       }
       layout(c(1,2))
       # before linlog
@@ -452,10 +456,11 @@ linlogshift <- function(object, lolim, uplim, cg, cr, n.bin, draw)
     if(draw != "off") {
       if( (draw=="screen") & (k!=1)) {
         # open a window on screen
-        if(.Platform$GUI == "AQUA")
-          quartz()
-        else
-          x11()
+        get(getOption("device"))()
+#        if(.Platform$GUI == "AQUA")
+#          quartz()
+#        else
+#          x11()
       }
       # setup the layout of the figures
       layout(matrix(1:4,2,2) )
