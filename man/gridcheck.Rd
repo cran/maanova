@@ -64,12 +64,12 @@ gridcheck(rawdata, array1, array2, highlight.flag = TRUE, flag.color = "Red",
 \examples{
 \dontrun{
 # load in data
-data(dbldyeswap)
-# grid check on all arrays
-gridcheck(rawdata, margin=c(1,1,1,1))
+data(kidney)
+# grid check on the first arrays
+gridcheck(kidney.raw, array1=1, margin=c(1,1,1,1))
 graphics.off()
 # grid check array 1 versus array 2
-gridcheck(rawdata, array1=1, array2=2, margin=c(1,1,1,1))
+gridcheck(rawdata, array1=1, array2=2)
 graphics.off()
 }
 }

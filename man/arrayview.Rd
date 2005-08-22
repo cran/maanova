@@ -46,29 +46,21 @@ arrayview(object, ratio, array, colormap, onScreen=TRUE, ...)
 
 \examples{
 \dontrun{
-data(dbldyeswap)
+data(kidney)
 ############################
 # arrayview plot on rawdata
 ############################
 # arrayview raw data on screen
-arrayview(rawdata)
+arrayview(kidney.raw, array=1)
 graphics.off()
 # arrayview raw data array 1 and 3 and output to postscript file
-postscript(file="dbldyeswapArrayview.ps")
-arrayview(rawdata, array=c(1,3), onScreen=FALSE)
-
-############################
-# RI plot on madata
-############################
-# make madata object without collapsing replicates
-data2 <- createData(rawdata, n.rep=2, avgreps=0)
-arrayview(data2)
-graphics.off()
+postscript(file="kidneyArrayview.ps")
+arrayview(kidney.raw, array=c(1,3), onScreen=FALSE)
 }
 
 # once the replicates are collapsed,
 # arrayview will be unavailable 
-\dontrun{data1 <- createData(rawdata, n.rep=2, avgreps=1)}
+\dontrun{data1 <- createData(kidney.raw, n.rep=2, avgreps=1)}
 \dontrun{arrayview(data1) # get an error here}
 }
 

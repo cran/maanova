@@ -209,6 +209,13 @@ makeModel <-
     # loop for all terms in the formula
     for(i in 1:nlabels) {
       X.drop <- matrix(rep(1, ndyes*narrays*nreps),ncol=1)
+      # make a column for reference samples (if any) in X.drop
+      if(length(refid) != 0) {
+        tmp <- matrix(0, nreps, ndyes*narrays)
+        tmp[,refid] <- 1
+        X.drop <- cbind(X.drop, as.vector(tmp))
+      }
+
       # find all terms nested with in the ith one
       idx.nest <- which(nesting[i,]==1)
       # combine all other termX together except the nesting ones

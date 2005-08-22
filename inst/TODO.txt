@@ -2,10 +2,16 @@
 Things to do for R/maanova
 --------------------------
 
-SHORT TERM:
-1. For 2 reference samples
+July 12, 2005
+----------------------------------------------------------------------
+I'm going to make R/maanova a part of BioConductor. 
+The things need to do are mainly the data structure
+convertion. I should to:
+1. Make functions madata2exprSet and exprSet2madata
+2. Modify numerous functions to take input of
+either madata or exprSet
 
-MEDIUM TERM:
+
 
 
 ----------------------------------------------------------------------

@@ -27,9 +27,9 @@ subset.madata(x, arrays, genes, \dots)
 }
 
 \examples{
-data(dbldyeswap)
+data(kidney)
 # create data object with replicate
-data <- createData(rawdata, n.rep=2)
+data <- createData(kidney.raw)
 # take out array 1 and 2
 smalldata <- subset(data, arrays=c(1,2))
 # take out the all arrays except array 1

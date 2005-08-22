@@ -103,6 +103,10 @@ matest <- function(data, model, term, Contrast, n.perm=1000, nnodes=1,
       is.ftest <- TRUE
     else { # test.type is given
       test.type <- match.arg(test.type)
+      if(test.type=="ttest")
+        is.ftest <- FALSE
+      else
+        is.ftest <- TRUE
       if(test.type=="ttest") # cannot be T-test
         stop("You must specify a Contrast matrix for doing T-test")
     }

@@ -39,13 +39,13 @@ dyeswapfilter(dataobj, r=4)
 
 \examples{
 \dontrun{
-data(dbldyeswap)
+data(kidney)
 # riplot before filtering
-riplot(rawdata)
+riplot(kidney.raw, array=1)
 # filter the gene
-rawdata <- dyeswapfilter(rawdata)
+rawdata <- dyeswapfilter(kidney.raw)
 # riplot again - some genes are highlighted
-riplot(rawdata)}
+riplot(rawdata, array=1)}
 }
 
 \keyword{models}

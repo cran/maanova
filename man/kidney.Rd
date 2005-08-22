@@ -13,7 +13,7 @@ and all arrays are duplicated. Flag for bad spots is included in the
 data.
 }
 
-\usage{data(kidney.raw)}
+\usage{data(kidney)}
 \format{
     An object of class \code{rawdata}.
 }
@@ -28,7 +28,7 @@ data.
 }
 
 \examples{
-data(kidney.raw)
+data(kidney)
 }
 
 \keyword{datasets}

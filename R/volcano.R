@@ -245,7 +245,7 @@ volcano.ttest <- function(matestobj, threshold, method, title,
   
     # draw a reference line based on the threshold of f1
     abline(h=-log10(th.f1))
-    idx1 <- p1[,icon] < th.f2
+    idx1 <- p1[,icon] < th.f1
     # replot the significant genes from F2 (if there) in red
     if("F2" %in% names(matestobj)) {
       idx2 <- p2[,icon] < th.f2
@@ -254,7 +254,7 @@ volcano.ttest <- function(matestobj, threshold, method, title,
     # replot the significant genes from F3 (if there) in green
     if("F3" %in% names(matestobj)) {
       idx3 <- p3[,icon] < th.f3
-      points(xvalue[idx3], yvalue[idx3], col="red", pch=4, cex=0.5)
+      points(xvalue[idx3], yvalue[idx3], col="green", pch=4, cex=0.5)
     }
     # plot the significant genes from Fs (if there) in orange
     if("Fs" %in% names(matestobj)) {

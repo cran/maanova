@@ -9,14 +9,14 @@
   replicates each and two technical replicates for each individual.
 }
 
-\usage{data(abf1.raw)}
+\usage{data(abf1)}
 
 \format{
   An object of class \code{rawdata}.
 }
 
 \examples{
-data(abf1.raw)
+data(abf1)
 }
 
 \keyword{datasets}

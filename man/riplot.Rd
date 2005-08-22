@@ -54,22 +54,21 @@ riplot(object, title, array, color = "blue", highlight.flag = TRUE,
 
 \examples{
 \dontrun{
-data(dbldyeswap)
+data(kidney)
 ############################
 # riplot on rawdata
 ############################
 # riplot raw data on screen
-riplot(rawdata)
+riplot(kidney.raw)
 graphics.off()
 # riplot raw data array 1 and 3 and output to postscript file
-postscript(file="dbldyeswapRIplot.ps")
-riplot(rawdata, array=c(1,3), onScreen=FALSE)
+postscript(file="kidneyRIplot.ps")
+riplot(kidney.raw, array=c(1,3), onScreen=FALSE)
 
 ############################
 # RI plot on madata
 ############################
-# create data object with collapsing replicates
-data1 <- createData(rawdata, n.rep=2, avgreps=1)
+data1 <- createData(kidney.raw)
 # do RI plot for all arrays
 riplot(data1)
 graphics.off()

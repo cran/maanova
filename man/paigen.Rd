@@ -17,14 +17,14 @@ as the factors. You can test the effects from any factor or
 any combination of them.
 }
 
-\usage{data(paigen.raw)}
+\usage{data(paigen)}
 
 \format{
     An object of class \code{rawdata}.
 }
 
 \examples{
-data(paigen.raw)
+data(paigen)
 }
 
 \keyword{datasets}

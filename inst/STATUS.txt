@@ -1,6 +1,17 @@
 
 Library maanova
 ================
+Version 0.98-7, Mar 4, 2005
+I lost track of some changes. But:
+1. Added function fill.missing to do missing data imputation
+using KNN;
+2. Added function exprSet2Rawdata to convert an object of
+exprSet from BioConductor to an object or rawdata
+3. Fix a small bug (dot color) in volcano
+4. Other misc changes for submitting R/maanova to BioConductor
+5. Wrote a Swave style vignette 
+
+---------------------------------------------------
 
 Version 0.98-4, Mar 4, 2005
 Add a new option test.type in matest function.
