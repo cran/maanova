@@ -18,14 +18,14 @@
 require("stats")
 
 # for rawdata
-transform.rawdata <- function(x, ...)
+transform.rawdata <- function(`_data`, ...)
 {
-  transform.madata(x, ...)
+  transform.madata(`_data`, ...)
 }
 
 # for madata
 transform.madata <-
-  function(x,
+  function(`_data`,
            method=c("shift","glowess","rlowess","linlog","linlogshift"),
            lolim, uplim,
            f=0.1, iter=3, degree=1,
@@ -33,7 +33,7 @@ transform.madata <-
            draw=c("screen", "dev", "off"), ...)
   
 {
-  object <- x
+  object <- `_data`
   if( !(class(object) %in% c("madata", "rawdata")) )
     stop("The input variable must be an object of madata or rawdata")
 
