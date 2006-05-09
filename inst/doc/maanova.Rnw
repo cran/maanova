@@ -41,7 +41,7 @@
 
 %%%% several examples
 % camda data
-\input camda.tex
+\input camda.tex\end{document}
 % paigen's data
 \input paigen.tex
 % abf1data
