@@ -41,13 +41,13 @@
 
 %%%% several examples
 % camda data
-\input camda.tex\end{document}
+\input camda.tex
 % paigen's data
 \input paigen.tex
 % abf1data
 \input abf1.tex
 
-%%%%% bibliography
+%%%% bibliography
 \bibliographystyle{plainnat}
 \bibliography{maanova}
 % there's no citation in the document
