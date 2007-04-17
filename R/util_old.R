@@ -191,23 +191,23 @@ sumrow <- function(x)
 
 # get the matrix rank (this is no this function in R???
 # I just couldn't find it)
-matrank <- function(X)
-{
-  if(is.vector(X))
-    # rank is 1 for vectors
-    return(1)
-  else if(is.matrix(X)) {
-    s <- ma.svd(X,0,0)
-    tol <- max(dim(X)) * s$d[1] * .Machine$double.eps
-    r <- sum(s$d>tol)
-    return(r)
-  }
-  else{
-    return(0)
-  }
-}
+#matrank <- function(X)
+#{
+#  if(is.vector(X))
+#    # rank is 1 for vectors
+#    return(1)
+#  else if(is.matrix(X)) {
+#    s <- La.svd(X,0,0)
+#    tol <- max(dim(X)) * s$d[1] * .Machine$double.eps
+#    r <- sum(s$d>tol)
+#    return(r)
+#  }
+#  else{
+#    return(0)
+#  }
+#}
 
-#matrank <- function(X, tol=1e-7) qr(X, tol=tol, LAPACK=FALSE)$rank
+matrank <- function(X, tol=1e-7) qr(X, tol=tol, LAPACK=FALSE)$rank
 
 
 # calculate matrix or vector norm, working only for vector now
@@ -436,14 +436,15 @@ pinv <- function(X, tol)
 # matrix by using LAPACK routines DGESVD and ZGESVD.
 #
 ###############################################################
-ma.svd <- function (x, nu = min(n, p), nv = min(n, p), method = c("dgesvd", 
+ma.svd <- function(x, nu = min(n, p), nv = min(n, p), method = c("dgesvd", 
     "dgesdd")) 
 {
     if (!is.numeric(x) && !is.complex(x)) 
-        stop("argument to 'ma.svd' must be numeric or complex")
+        stop("argument to 'La.svd' must be numeric or complex")
     if (any(!is.finite(x))) 
         stop("infinite or missing values in 'x'")
     method <- match.arg(method)
+
     x <- as.matrix(x)
     if (is.numeric(x)) 
         storage.mode(x) <- "double"
@@ -481,12 +482,10 @@ ma.svd <- function (x, nu = min(n, p), nv = min(n, p), method = c("dgesvd",
         if (is.complex(x)) {
             u[] <- as.complex(u)
             v[] <- as.complex(v)
-            res <- .Call("La_svd_cmplx", jobu, jobv, x, double(min(n, 
-                p)), u, v, PACKAGE = "base")
+            res <- .Call("La_svd_cmplx", jobu, jobv, x, double(min(n, p)), u, v, PACKAGE = "base")
         }
         else {
-            res <- .Call("masvd", jobu, jobv, x, double(min(n, 
-                p)), u, v, method, PACKAGE = "maanova")
+            res <- .Call("masvd", jobu, jobv, x, double(min(n,p)), u, v, "dgesvd", PACKAGE = "maanova")
         }
         return(res[c("d", if (nu) "u", if (nv) "vt")])
     }
@@ -510,8 +509,7 @@ ma.svd <- function (x, nu = min(n, p), nv = min(n, p), method = c("dgesvd",
             v <- matrix(0, 1, 1)
         }
         jobv <- ""
-        res <- .Call("La_svd", jobu, jobv, x, double(min(n, p)), 
-            u, v, method, PACKAGE = "base")
+        res <- .Call("La_svd", jobu, jobv, x, double(min(n,p)), u, v, "dgesdd", PACKAGE = "base")
         res <- res[c("d", if (nu) "u", if (nv) "vt")]
         if (nu) 
             res$u <- res$u[, 1:min(n, nu), drop = FALSE]
@@ -520,7 +518,6 @@ ma.svd <- function (x, nu = min(n, p), nv = min(n, p), method = c("dgesvd",
         return(res)
     }
 }
-
 
 ###############################################################
 #
