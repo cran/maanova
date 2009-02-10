@@ -1,5 +1,29 @@
 Library maanova
 ================
+
+Version 1.13.2 & 1.13.3, Feb 9, 2009
+- fixed issue where random terms were not getting passed to matest
+  permutations when shuffle.method was set to "resid"
+- fixed bad call to "Warning(...)" (should have been "warning(...)")
+- fixed misc other minor documentation and metadata issues
+
+---------------------------------------------------
+
+Version 1.13.1, Dec 5, 2008
+- did minor documentation updates
+- changed get(getOption("device"))() to dev.new() since getOption breaks in R 2.8
+- removed bad reference to ttest.method in clustering code
+- fixed error in summarytable.R where replicates would cause a failure
+
+---------------------------------------------------
+
+Version 1.5.1, Aug 18, 2007
+
+Modify the function 
+Reconstruct the flow
+
+---------------------------------------------------
+
 Version 1.4.1, Apr 17, 2007
 1. added the function ma.svd() to call LAPACK function DGESVD directly. It 
 works the same way as the old La.svd() in R-2.3.1 and earlier.

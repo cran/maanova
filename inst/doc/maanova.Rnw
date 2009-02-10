@@ -6,7 +6,7 @@
 %documentclass[12pt, a4paper]{article}
 \documentclass[12pt]{article}
 
-\usepackage{graphics,amsmath,pstricks}
+\usepackage{graphics,amsmath}
 \usepackage{hyperref}
 \usepackage[authoryear,round]{natbib}
 \usepackage{Sweave}
@@ -24,8 +24,7 @@
 \newcommand{\Robject}[1]{{\texttt{#1}}}
 \newcommand{\Rpackage}[1]{{\textit{#1}}}
 
-
-\author{Hao Wu, Gary A. Churchill}
+\author{Hao Wu, Hyuna Yang, Gary A. Churchill}
 \begin{document}
 \title{R/MAANOVA: An extensive R environment for the Analysis of Microarray Experiments}
 
@@ -42,8 +41,6 @@
 %%%% several examples
 % camda data
 \input camda.tex
-% paigen's data
-\input paigen.tex
 % abf1data
 \input abf1.tex
 
@@ -85,7 +82,6 @@
 \input algorithm.tex
 \input faq.tex
 \end{appendix}
-
 
 \end{document}
 

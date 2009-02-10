@@ -233,17 +233,18 @@ calPval <- function(fstar, fobs, pool)
 #
 ########################################################
 matest.engine <- function(anovaobj, term, mv, test.method, Contrast,
-                          is.ftest, partC, verbose=FALSE)
+         is.ftest, partC, verbose=FALSE)
 {
-  
   # local variables
   model <- anovaobj$model
   # parse the formula
   parsed.formula <- model$parsed.formula
+  # subtract the column mean
 
   ################################################################
   # find the indices for these terms in information matrix (C)
   # relocate the term(s), e.g., the indices of term in all fixed terms
+
   fixed.term <- parsed.formula$labels[parsed.formula$random==0]
   termidx <- locateTerm(fixed.term, term)
   # find reference sample id
@@ -259,7 +260,7 @@ matest.engine <- function(anovaobj, term, mv, test.method, Contrast,
       colstart <- bstart + 1
     else
       colstart <- sum(model$dimX[1:(termidx[i]-1)]) + bstart + 1
-    colend <- sum(model$dimX[1:termidx[i]]) + bstart;
+    colend <- sum(model$dimX[1:termidx[i]]) + bstart
     colidx <- c(colidx, colstart:colend)
   }
 
@@ -267,33 +268,31 @@ matest.engine <- function(anovaobj, term, mv, test.method, Contrast,
     cat("Start doing F test...\n")
 
   # get the estimates for the tested terms
-  b <- NULL
-  for(i in 1:length(termidx)) {
+  b <- NULL; 
+  for(i in 1:length(termidx)){
     tmpterm <- term[i]
     # get the estimates
     tmpb <- anovaobj[[tmpterm]]
     b <- cbind(b, tmpb)
   }
- 
+
   # Finish making comparison matrix
   # calculate denominator's df from model and the term to test 
   dfFtest <- caldf(model, term[1])
 
   # setup some parameters
-  if(is.ftest) { # this is F-test
+  if(is.ftest){ # this is F-test
     # df for numerator - fixed model only
     dfnu <- dim(Contrast)[1]
     # number of test is 1 for F test
     n.test <- 1
   }
-  else {
+  else{
     # do T-test
     # number of tests 
     n.test <- dim(Contrast)[1]
     dfnu <- 1 #df for T-test is 1
-  }
-  
-                  
+  }                
   ##################################
   # start to do tests
   ##################################
@@ -304,18 +303,15 @@ matest.engine <- function(anovaobj, term, mv, test.method, Contrast,
   # initialize output object
   ngenes <- length(anovaobj$G)
   ftest <- NULL
-  if(test.method[1] == 1)
+  if(test.method[1] == 1){
     ftest$F1 <- matrix(0, ngenes, n.test)
-
-  if(test.method[2] == 1)
-    ftest$F2 <- matrix(0, ngenes, n.test)
-
-  if(test.method[3] == 1)
-    ftest$F3 <- matrix(0, ngenes, n.test)
-  
-  if(test.method[4] == 1)
+  }
+  if(test.method[2] == 1){
     ftest$Fs <- matrix(0, ngenes, n.test)
-  
+  }
+  #if(test.method[3] == 1){ 
+  #  ftest$Fss <- matrix(0, ngenes, n.test)
+  #}
   # for fixed model
   if(model$mixed == 0) {
     if(missing(partC)) { # calculate partC if not given
@@ -346,19 +342,9 @@ matest.engine <- function(anovaobj, term, mv, test.method, Contrast,
     if(test.method[1] == 1) {
       ftest$F1 <- apply(Fval, 2, function(x) x/anovaobj$S2)
     }
-    #F2
-    if(test.method[2] == 1) {
-      meanS2 <- mean(anovaobj$S2)
-      tmps2 <- (meanS2+anovaobj$S2) / 2
-      ftest$F2 <- apply(Fval, 2, function(x) x/tmps2)
-    }
-    # F3
-    if(test.method[3] == 1) {
-      meanS2 <- mean(anovaobj$S2)
-      ftest$F3 <- apply(Fval, 2, function(x) x/meanS2)
-    }
+  
     #Fs
-    if(test.method[4] == 1) {
+    if(test.method[2] == 1) {
       if(missing(mv)) {
         mv <- meanvarlog(df.random)
       }
@@ -368,7 +354,6 @@ matest.engine <- function(anovaobj, term, mv, test.method, Contrast,
       ftest$Fs <- apply(Fval, 2, function(x) x/JSs2)
     }
   }
-  
   if(model$mixed == 1) { # for mixed model
     X <- model$X
     XX <- t(X) %*% X
@@ -381,26 +366,7 @@ matest.engine <- function(anovaobj, term, mv, test.method, Contrast,
     # number of random variables (excluding residual)
     nrandom <- length(dimZ)
 
-    if(test.method[3] == 1) {
-      # make C matrix for F3 test. Note that C3 matrix is the same for all genes
-      # so I pull it out of the gene loop
-      # mean s2 for all random terms (including residual)
-      means2 <- NULL
-      for(i in 1:(nrandom+1))
-        means2[i] <- mean(anovaobj$S2[,i])
-      s0  <- means2[nrandom+1]
-      d <- NULL
-      for(i in 1:nrandom)
-        d <- c(d, means2[i]*rep(1,dimZ[i]))
-      D <- diag(d)
-      V <- s0*Im + ZZ%*%D
-      A <- rbind( cbind(XX, XZ%*%D), cbind(t(XZ), V) )
-      A <- pinv(A)
-      C3 <- s0 * rbind(A[1:k,], D%*%A[(k+1):(k+m),])
-    }
-    # finish build C3 matrix
-
-    if(test.method[4] == 1) {
+    if(test.method[2] == 1) {
       # calcualate the shrinkage estimator for variance components.
       # This is needed for Fs test
       if(missing(mv)) {
@@ -428,22 +394,8 @@ matest.engine <- function(anovaobj, term, mv, test.method, Contrast,
         C1 <- s0 * rbind(A[1:k,], D%*%A[(k+1):(k+m),])
       }
     
-      # C2
-      if(test.method[2] == 1) {
-        s2 <- (anovaobj$S2[i,] + means2) / 2
-        s0 <- s2[nrandom+1]
-        d <- NULL
-        for(j in 1:nrandom)
-          d <- c(d, s2[j]*rep(1,dimZ[j]))
-        D <- diag(d)
-        V <- s0*Im + ZZ%*%D
-        A <- rbind( cbind(XX, XZ%*%D), cbind(t(XZ), V) )
-        A <- pinv(A)
-        C2 <- s0 * rbind(A[1:k,], D%*%A[(k+1):(k+m),])
-      }
-    
       # Cs
-      if(test.method[4] == 1) {
+      if(test.method[2] == 1) {
         s2 <- JSs2[i,]
         s0 <- s2[nrandom+1]
         d <- NULL
@@ -471,35 +423,15 @@ matest.engine <- function(anovaobj, term, mv, test.method, Contrast,
       
       # F1
       if(test.method[1] == 1) {
-#        browser()
         partC <- C1[colidx, colidx]
         if(!is.ftest)
           ftest$F1[i,] <- apply(Contrast, 1, ttest)
         else
           ftest$F1[i] <- as.numeric((t(fm) %*% solve(Contrast%*%partC%*%t(Contrast)) %*% fm)
                                     / dfnu)
-      }
-      # F2
-      if(test.method[2] == 1) {
-        partC <- C2[colidx, colidx]
-        if(!is.ftest)
-          ftest$F2[i,] <- apply(Contrast, 1, ttest)
-        else
-          ftest$F2[i] <- as.numeric((t(fm) %*% solve(Contrast%*%partC%*%t(Contrast)) %*% fm)
-                                    / dfnu)
-      }
-      # F3
-      if(test.method[3] == 1) {
-        partC <- C3[colidx, colidx]
-        if(!is.ftest)
-          ftest$F3[i,] <- apply(Contrast, 1, ttest)
-        else
-          ftest$F3[i] <- as.numeric((t(fm) %*% solve(Contrast%*%partC%*%t(Contrast)) %*% fm)
-                                    / dfnu)
-      }
-      
+      }     
       # Fs
-      if(test.method[4] == 1) {
+      if(test.method[2] == 1) {
         partC <- Cs[colidx, colidx]
         if(!is.ftest)
           ftest$Fs[i,] <- apply(Contrast, 1, ttest)
@@ -507,7 +439,6 @@ matest.engine <- function(anovaobj, term, mv, test.method, Contrast,
           ftest$Fs[i] <- as.numeric((t(fm) %*% solve(Contrast%*%partC%*%t(Contrast)) %*% fm)
                                     / dfnu)
       }
-      
     }
     # finish gene loop
   }
@@ -520,24 +451,21 @@ matest.engine <- function(anovaobj, term, mv, test.method, Contrast,
   ftest
 }
 
-
 ######################################################################
 #
 # function to perform permutation F test
 #
 #######################################################################
-matest.perm <- function(n.perm, FobsObj, data, model, term, Contrast, inits20, mv,
-                        is.ftest, partC, MME.method, test.method,
+matest.perm <- function(n.perm, FobsObj, data, model, term, Contrast,
+                        mv, is.ftest, partC, MME.method, test.method,
                         shuffle.method, pool.pval, ngenes)
 {
   # local variables
-
   # number of contrasts
   if(is.ftest) # this is F-test
     nContrast <- 1
   else # this is T-test
     nContrast <- dim(Contrast)[1]
-  
   # initialize result
   # the result is the number of permutation F values bigger than the observed
   # F value for each gene. Plus the maximum permutation F value for each permutaion
@@ -547,36 +475,11 @@ matest.perm <- function(n.perm, FobsObj, data, model, term, Contrast, inits20, m
     Pval$F1$Pperm <- array(0, c(ngenes, nContrast))
   }
   if(test.method[2] == 1) {
-    Pval$F2$Pmax <- array(0, c(ngenes, nContrast))
-    Pval$F2$Pperm <- array(0, c(ngenes, nContrast))
-  }
-  if(test.method[3] == 1) {
-    Pval$F3$Pmax <- array(0, c(ngenes, nContrast))
-    Pval$F3$Pperm <- array(0, c(ngenes, nContrast))
-  }
-  if(test.method[4] == 1) {
     Pval$Fs$Pmax <- array(0, c(ngenes, nContrast))
     Pval$Fs$Pperm <- array(0, c(ngenes, nContrast))
   }
-
-#  fstar <- NULL
-#  if(test.method[1] == 1)
-#    fstar$Fstar1 <- array(0, c(ngenes, nContrast, n.perm))
-#  if(test.method[2] == 1)
-#    fstar$Fstar2 <- array(0, c(ngenes, nContrast, n.perm))
-#  if(test.method[3] == 1)
-#    fstar$Fstar3 <- array(0, c(ngenes, nContrast, n.perm))
-#  if(test.method[4] == 1)
-#    fstar$Fstars <- array(0, c(ngenes, nContrast, n.perm))
-
-  # residual shuffle is only for fixed model
-  if( (model$mixed==1) & (shuffle.method=="resid") ) {
-    warning("You can only do sample shuffling for mixed model test")
-    shuffle.method <- "sample"
-  }
-
   # prepare permutation 
-  if(shuffle.method == "sample")  {
+  if(shuffle.method == "sample"){
     # base used in shuffling
     shuffle.base <- NULL
     # if this is fixed model, shuffle tested term randomly
@@ -584,7 +487,7 @@ matest.perm <- function(n.perm, FobsObj, data, model, term, Contrast, inits20, m
     if(model$mixed) {
       nesting <- model$nesting
       # exclude the term itself
-      #diag(nesting) <- NA
+      # diag(nesting) <- NA
       # find the nesting terms
       idx.nesting <- which(nesting[term[1],]==1)
       # for multiple terms
@@ -603,13 +506,13 @@ matest.perm <- function(n.perm, FobsObj, data, model, term, Contrast, inits20, m
       if(length(idx.nesting) > 1) {
         # if we have multiple base here, find the one on the lowest level
         # the term with the least number of columns should be the one
-        #index for random terms in model
+        # index for random terms in model
         idx.random <- which(model$parsed.formula$random==1)
         # index for nesting terms in random terms
         tmpidx <- NULL
         for(itmp in 1:length(idx.random))
           tmpidx <- c(tmpidx, which(idx.nesting[itmp]==idx.random))
-        #tmpidx <- which(idx.nesting==idx.random)
+        # tmpidx <- which(idx.nesting==idx.random)
         # number of columns for these nesting random terms
         dimZ.nesting <- model$dimZ[tmpidx]
         # which one is the smallest?
@@ -619,8 +522,7 @@ matest.perm <- function(n.perm, FobsObj, data, model, term, Contrast, inits20, m
       }
 
       # make shuffle base
-      if(length(idx.nesting) == 0)
-        shuffle.base <- NULL
+      if(length(idx.nesting) == 0) shuffle.base <- NULL
       else {
         base.term <- model$parsed.formula$labels[idx.nesting]
         # make shuffle base
@@ -630,23 +532,46 @@ matest.perm <- function(n.perm, FobsObj, data, model, term, Contrast, inits20, m
     }
   }      
         
-  else if(shuffle.method=="resid") {
-    # residual shuffling - for fixed model only
+  else if(shuffle.method=="resid"){
     # this is to shuffle the null model residuals
     # make a null model with the tested term excluded
-    # terms in the null model. note that this is only for fixed model
     terms.null <- setdiff(model$parsed.formula$labels, term)
+    
     if(length(terms.null) == 0) # null model has no terms
       nullformula <- "~1"
     else {
       nullformula <- paste(terms.null, collapse="+")
       nullformula <- paste("~", nullformula, sep="")
     }
-    nullmodel <- makeModel(data, formula=as.formula(nullformula))
-    # fit anova model on null model
-    anova0 <- fitmaanova(data, nullmodel, verbose=FALSE)
+    rt = model$parsed.formula$random; ct = model$parsed.formula$covariate
+    randomt = model$random ; covariatet = model$covariate
+    if(any(rt)>0){
+      rt = model$parsed.formula$labels[rt==1]
+      randomterm <- setdiff(rt, term)
+      if(length(randomterm) == 0) # null model has no terms
+          randomterm.null <- "~1"
+      else {
+          randomterm.null <- paste(randomterm, collapse="+")
+          randomterm.null <- paste("~", randomterm.null, sep="")
+      }
+      randomt = as.formula(randomterm.null)
+    }
+    if(any(ct)>0){
+      ct = model$parsed.formula$labels[ct==1]
+      covterm <- setdiff(ct, term)
+      if(length(covterm) == 0) # null model has no terms
+        covterm.null <- "~1"
+      else {
+        covterm.null <- paste(covterm, collapse="+")
+        covterm.null <- paste("~", covterm.null, sep="")
+      }
+      covariatet = as.formula(covterm.null)
+    }
+    anova0 <- fitmaanova(data, formula=as.formula(nullformula), 
+        random = randomt, covariate = covariatet, verbose=FALSE, subCol=FobsObj$obsAnova$subCol)
     resid0 <- data$data - anova0$yhat
-    nresid <- length(resid0)
+    #nresid <- length(resid0) # across
+    #nresid <- ncol(resid0) #within
     data.perm <- data
   }
   ##############################
@@ -666,11 +591,13 @@ matest.perm <- function(n.perm, FobsObj, data, model, term, Contrast, inits20, m
       else {
         # shuffle tested terms according to shuffle base
         # number of samples to be shuffled
-        tmpSample <- shuffle.base[model$design$Sample != 0]
+        if(length(model$design$Sample)==0) Sample = c(1:nrow(model$design)) 
+        else Sample = model$design$Sample 
+        tmpSample <- shuffle.base[Sample != 0]
         tmpSample.unique <- unique(tmpSample)
         nsample <- length(tmpSample.unique)
         # index for non-reference sample
-        idx.noref <- model$design$Sample!=0 
+        idx.noref <- Sample!=0 
         # permutation index
         idx.perm <- sample(nsample)
         # shuffle the design and remake a model object
@@ -687,37 +614,37 @@ matest.perm <- function(n.perm, FobsObj, data, model, term, Contrast, inits20, m
         }
       }
              
-      # remake model
-      model.perm <- makeModel(data, design.perm, model$formula,
-                              model$random, model$covariate)
       # fit anova model
-      anovaobj.perm <- fitmaanova(data, model.perm, inits20=inits20,
-                                method=MME.method, verbose=FALSE)
+      data.perm = data ; data.perm$design = design.perm;
+      anovaobj.perm <- fitmaanova(data.perm, formula=model$formula, 
+        random=model$random, covariate=model$cov, verbose=FALSE, subCol=FobsObj$obsAnova$subCol)
+      
     }
     else if(shuffle.method=="resid") {
       # residual shuffling - this is for fixed model
       # global shuffle residual without replacement
-      idx <- sample(nresid, replace=FALSE)
-      # remake data
-      data.perm$data <- anova0$yhat + resid0[idx]
+      newresid0 = t(apply(resid0, 1, sample))
+      data.perm$data <- anova0$yhat + newresid0
       # fit anova model
-      anovaobj.perm <- fitmaanova(data.perm, model, verbose=FALSE)
+      anovaobj.perm <- fitmaanova(data.perm, formula=model$formula, 
+        random=model$random,covariate=model$cov,mamodel = model,
+        verbose=FALSE, subCol=FobsObj$obsAnova$subCol)
     }
-
     # start to do F-test
     # provide partC for fixed model test
     if(model$mixed == 0)
       # if this is fixed model, pass in partC
       # so we can save some calculation time
       ftest.perm <- matest.engine(anovaobj.perm, term, mv, test.method,
-                                Contrast, is.ftest, partC, verbose=FALSE)
+            Contrast, is.ftest, partC, verbose=FALSE)
     else
       ftest.perm <- matest.engine(anovaobj.perm, term, mv, test.method,
-                                  Contrast, is.ftest, verbose=FALSE)
+                    Contrast, is.ftest, verbose=FALSE)
+    
     # update the result
-    ffields <- c("F1","F2","F3","Fs")
+    ffields <- c("F1","Fs")
     for(icon in 1:nContrast) { # loop for multiple contrasts
-      for(i in 1:4) { # loop for different F test methods
+      for(i in 1:2) { # loop for different F test methods
         if(test.method[i] == 1) { # if this F test is requested
           fobs <- FobsObj[[ffields[i]]]$Fobs[,icon]
           fstar <- ftest.perm[[ffields[i]]][,icon]
@@ -731,23 +658,22 @@ matest.perm <- function(n.perm, FobsObj, data, model, term, Contrast, inits20, m
           if(pool.pval) { # use pooled p value
             Fobs.rank <- rank(fobs)
             Fstar.rank <- rank(c(fobs, fstar))
-            Pval[[ffields[i]]]$Pperm[,icon] <- Pval[[ffields[i]]]$Pperm[,icon] +
+            Pval[[ffields[i]]]$Pperm[,icon] <-Pval[[ffields[i]]]$Pperm[,icon] +
               data$n.gene - (Fstar.rank[1:ngenes]-Fobs.rank)
           }
-          else { # not pool
+          else{ # not pool
             tmp <- fstar > fobs
-            Pval[[ffields[i]]]$Pperm[,icon] <- Pval[[ffields[i]]]$Pperm[,icon] + tmp
+            Pval[[ffields[i]]]$Pperm[,icon]<-Pval[[ffields[i]]]$Pperm[,icon] + 
+                tmp
           }
         }
       }
     }
   }
-  
+
   # return
   Pval
 }
-  
-
 ################################################
 # checkContrast - to check if the given contrast
 # matrix is valid or not
@@ -1025,3 +951,10 @@ makeShuffleGroup <- function(sample.mtx, ndye, narray) {
   groups
 }
 
+mixture= function(p,xg,m1g, m2g, sg){
+  mu=m1g/p;
+  taos=((m2g-mean(sg^2))/p-mu^2);
+  taos=max(taos,0);
+  out=p*dnorm(xg,mu,sqrt(sg^2+taos)) +(1-p)*dnorm(xg,0,sg)+exp(-700);
+  out=-sum(log(out));
+}

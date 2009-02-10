@@ -8,12 +8,12 @@
 #
 # Part of the R/maanova package
 #
-#
 ######################################################################
 
 geneprofile <- function(anovaobj, term, geneidx,
                         col="blue", type="b", ylim, xlab, ylab, ...)
 {
+
   if(class(anovaobj) != "maanova")
     stop("The first input variable is not an object of class maanova.")
 

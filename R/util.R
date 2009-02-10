@@ -1,5 +1,4 @@
 ######################################################################
-#
 # util.R
 #
 # copyright (c) 2001, Hao Wu and Gary A. Churchill, The Jackson Lab.
@@ -27,7 +26,6 @@ matsort <- function(mat, index=1)
     for(i in 1:n[1])
       result[i,] <- sort(mat[i,])
   }
-
   result
 }
 
@@ -272,7 +270,6 @@ parseformula <- function(formula, random, covariate)
         result$covariate[idx] <- 1
     }
   }
-
   result
 }
 
@@ -528,62 +525,63 @@ ma.svd <- function (x, nu = min(n, p), nv = min(n, p), method = c("dgesvd",
 # for FDR control
 #
 ###############################################################
-fdr <- function(p, method=c("stepup", "adaptive", "stepdown"))
+fdr <- function(p, method=c("stepup", "adaptive", "stepdown", "jsFDR"))
 {
   method <- match.arg(method)
+  if( method=="setup" | method =="adaptive" | method=="setdown" ){
+    m <- length(p)
+    tmp <- sort(p, index.return=TRUE)
+    sortp <- tmp$x
+    idx <- tmp$ix
 
-  m <- length(p)
-  tmp <- sort(p, index.return=TRUE)
-  sortp <- tmp$x
-  idx <- tmp$ix
+    if(method == "stepdown") {
+      d <- m:1
+      sortp <- (1-(1-sortp)^d) * d/m
 
-  if(method == "stepdown") {
-    d <- m:1
-    sortp <- (1-(1-sortp)^d) * d/m
-
-    for(i in 1:(m-1)) {
-      if(sortp[i+1] < sortp[i])
-        sortp[i+1] <- sortp[i]
+      for(i in 1:(m-1)) {
+        if(sortp[i+1] < sortp[i])
+          sortp[i+1] <- sortp[i]
+      }
     }
+    else{
+      if(method == "stepup")
+        m0 <- m
+      else if(method == "adaptive") {
+        s <- sort(1 - sortp)/(1:m)
+        # calculate m0
+        m0raw <- m
+        i <- m
+        while(i > 1 && s[i] <= s[i - 1]) i <- i - 1
+        if(i > 1) m0raw <- 1/s[i - 1]
+        else m0raw <- 1/s[1]
+        m0 <- min(floor(1 + m0raw), m)
+      }
+      # calculate sortp
+      sortp <- sortp * m0 / (1:m)
+      for(i in (m-1):1) {
+        if(sortp[i] > sortp[i+1])
+          sortp[i] <- sortp[i+1]
+      }
+    }
+    result <- NULL
+    result[idx] <- sortp
   }
-  else {
-    if(method == "stepup")
-      m0 <- m
-    else if(method == "adaptive") {
-      s <- sort(1 - sortp)/(1:m)
-      # calculate m0
-      m0raw <- m
-      i <- m
-      while(i > 1 && s[i] <= s[i - 1]) i <- i - 1
-      if(i > 1)
-      m0raw <- 1/s[i - 1]
-      else m0raw <- 1/s[1]
-      m0 <- min(floor(1 + m0raw), m)
-    }
-
-
-    # calculate sortp
-    sortp <- sortp * m0 / (1:m)
-    for(i in (m-1):1) {
-      if(sortp[i] > sortp[i+1])
-        sortp[i] <- sortp[i+1]
-    }
+  else if(method=="jsFDR"){
+    library(qvalue)
+    result = qvalue(p)$qvalues
   }
-
-  # return variable
-  result <- NULL
-  result[idx] <- sortp
-
+  else
+    stop("Need to specify FDR method (stepup, adaptive, stepdown, or jsFDR). To use jsFDR, one needs to install qvalue() package")
   result
 }
 
 ###############################################################
-# meanvarlog - function to generate mean and var for a logrithm
+# meanvarlogold - function to generate mean and var for a logrithm
 # chi2 distribution
 # This is used by JSshrinker
 ###############################################################
 
-meanvarlog <- function(df)
+meanvarlogold <- function(df)
 {
   meanlog <- rep(0,length(df))
   varlog <- rep(0, length(df))
@@ -600,6 +598,27 @@ meanvarlog <- function(df)
   result$meanlog <- meanlog
   result$varlog <- varlog
 
+  result
+}
+###############################################################
+# meanvarlog - function to generate mean and var for a logrithm
+# Analytic formula is provided by Stanley Pounds
+# Pounds (2007) Computational Enhancement of a Shrinkage-Based
+# ANOVA F-test Proposed for Differential Gene Expression Analysis.
+# Biostatistics, to appear.
+# This is used by JSshrinker
+###############################################################
+
+meanvarlog <- function(df)
+{
+  result <- NULL
+  B = exp(-log(2)-digamma(df/2)+log(df))
+  result$meanlog <-  -log(B)
+
+  E2<-log(2)^2+2*log(2)*digamma(df/2)+trigamma(df/2)+digamma(df/2)^2
+  m<-log(2)+digamma(df/2)-log(df)
+  varlog <-E2-2*log(df)*(m+log(df))+log(df)^2-m^2
+  result$varlog <- varlog
   result
 }
 
@@ -653,16 +672,10 @@ JSshrinker <- function(X, df, meanlog, varlog)
   result
 }
 
- 
-#################################################
-# the following functions are useful for Jmaanova
-#################################################
-
-######################################################################
-#
+###################################################################### 
 # make.ratio.R
 # Calculate the logratio for two dye arrays
-#
+# this function is useful for Jmaanova
 ######################################################################
 make.ratio <- function(object, norm.std=TRUE)
 {
@@ -709,5 +722,25 @@ make.ratio <- function(object, norm.std=TRUE)
   result <- matrix(z$result, n.row, n.col/2)
 
   result
+}
+
+######################################################################
+# PairContrast : make all possible pairwise comparison
+######################################################################
+
+PairContrast <- function(n){
+  if(n>=2){
+    res = NULL
+    for(i in (n-1):1){
+      a=matrix(0,nrow=i, ncol=i)
+      diag(a) = -1
+      if(n-i-1>0) 
+        res = rbind(res, cbind(matrix(0,nrow=i, ncol=(n-i-1)), rep(1, i), a))
+      else res = rbind(res, cbind(rep(1, i), a))
+    }
+    return(res)
+  }
+  else stop("n should be bigger than 2")
+  return(res)
 }
 

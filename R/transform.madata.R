@@ -44,8 +44,11 @@ transform.madata <-
   # set the data to be transformed
   # if it's madata, the data field should be log2 based,
   # restore back to raw scale
-  if(class(object)=="madata")
-    object$data <- 2^(object$data)
+  if( class(object)=="madata" ) 
+    if(object$TransformMethod !="log2") 
+      warning(" I assume data is log2 transformed. Otherwise, read madata using
+      read.madata(... log.transform=T). \n")   
+  object$data <- 2^(object$data)
 
   # transformation method
   method <- match.arg(method)
@@ -160,7 +163,7 @@ shift <- function(object, lolim, uplim, draw)
     if( draw != "off") { # draw the offset plot
       if( (draw=="screen") & (k!=1) ) {
         # open a window on screen
-        get(getOption("device"))()
+        dev.new()
 #        if(.Platform$GUI == "AQUA")
 #          quartz()
 #        else
@@ -239,7 +242,7 @@ glowess <- function(object, method, f, iter, degree, draw)
     if(draw != "off") {      
       if( (draw=="screen") & (k!=1) ) {
         # open a window on screen
-        get(getOption("device"))()
+        dev.new()
 #        if(.Platform$GUI == "AQUA")
 #          quartz()
 #        else
@@ -307,7 +310,7 @@ rlowess <- function(object, method, grow, gcol, f, iter, degree, draw)
     if(draw!="off") {
       if( (draw=="screen") & (k!=1) ) {
         # open a window on screen
-        get(getOption("device"))()
+        dev.new()
 #    if(.Platform$GUI == "AQUA")
 #          quartz()
 #        else
@@ -366,7 +369,7 @@ linlog <- function(object, cg, cr, draw)
     for(i in 1:object$n.array) {
       if( (draw=="screen") & (i!=1)) {
         # open a window on screen
-        get(getOption("device"))()
+        dev.new()
 #        if(.Platform$GUI == "AQUA")
 #          quartz()
 #        else
@@ -456,7 +459,7 @@ linlogshift <- function(object, lolim, uplim, cg, cr, n.bin, draw)
     if(draw != "off") {
       if( (draw=="screen") & (k!=1)) {
         # open a window on screen
-        get(getOption("device"))()
+        dev.new()
 #        if(.Platform$GUI == "AQUA")
 #          quartz()
 #        else

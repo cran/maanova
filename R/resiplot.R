@@ -11,9 +11,10 @@
 # 
 ######################################################################
 
-resiplot <- function(madata, anovaobj, header)
+resiplot <- function(madata, anovaobj, header, xlab, ylab)
   
 {
+ 
   # check input variables
   if(class(madata) != "madata")
     stop("This first input variable is not an object of class madata.")
@@ -35,6 +36,10 @@ resiplot <- function(madata, anovaobj, header)
   # figure title
   if(missing(header))
     header <- "Residual vs. Yhat plot"
+  if(missing(xlab))
+    xlab <- "Yhat"
+  if(missing(ylab))
+    ylab <- "Residual"
   
   # save old par parameters
   old.mar <- par("mar")
@@ -53,6 +58,6 @@ resiplot <- function(madata, anovaobj, header)
   # plot the residual
   for(i in 1:ndyes) 
     plot(x=yhat[,dye==i], y=resi[,dye==i], xlim=xlim, ylim=ylim,
-         xlab="Yhat", ylab="Residual", col=color[i],
+         xlab=xlab, ylab=ylab, col=color[i],
          pch=4, cex=0.5, main=paste(header,"Dye", i))
 }
