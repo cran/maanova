@@ -1,5 +1,5 @@
 Package: maanova
-Version: 1.20.0
+Version: 1.22.0
 Title: Tools for analyzing Micro Array experiments
 Author: Hao Wu, modified by Hyuna Yang and Keith Sheppard with ideas
         from Gary Churchill, Katie Kerr and Xiangqin Cui.
@@ -14,6 +14,6 @@ Imports: Biobase, graphics, grDevices, methods, stats, utils
 Suggests: qvalue, snow
 Enhances: Rmpi
 biocViews: Microarray, DifferentialExpression, Clustering
-Packaged: 2010-10-18 08:31:14 UTC; biocbuild
+Packaged: 2011-04-14 06:34:06 UTC; biocbuild
 Repository: CRAN
-Date/Publication: 2010-10-26 12:23:25
+Date/Publication: 2011-04-26 19:18:06
